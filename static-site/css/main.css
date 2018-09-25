@@ -1,0 +1,29 @@
+body {
+  background-color: #ddd;
+  padding: 0.5em;
+  text-align: center;
+  font-family: "Helvetica Neueu", "Helvetica", "Arial", sans;
+}
+
+#player {
+  display: inline-block;
+  background-color: #eee;
+  width: 640px;
+  height: 480px;
+  margin: 0.5em;
+}
+
+#imageInput {
+  display: none;
+  background-color: #eee;
+  width: 640px;
+  height: 360px;
+  margin: 0.5em;
+}
+
+button {
+  margin: 0.5em;
+  width: 200px;
+  height: 50px;
+  font-size: 1.2em;
+}

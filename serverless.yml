@@ -1,0 +1,146 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+plugins:
+  - serverless-s3-sync
+
+service: reko-photo-tagging
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python2.7
+  stackName: ${self:service}-CF-Template
+  logRetentionInDays: 14
+  region: eu-west-1
+  memorySize: 128
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem
+      Resource:
+        - Fn::GetAtt:
+          - rekoPhotosTable
+          - Arn
+        - Fn::GetAtt:
+          - rekoTagsTable
+          - Arn
+        - Fn::GetAtt:
+          - rekoPhotosTagsTable
+          - Arn
+
+    - Effect: Allow
+      Action:
+        - s3:ListBucket
+        - s3:GetObject
+      Resource:
+         Fn::Join:
+           - ""
+           - - "arn:aws:s3:::"
+             - ${self:service}-${self:provider.stage}/*
+
+    - Effect: Allow
+      Action:
+        - rekognition:DetectLabels
+        - rekognition:DetectFaces
+      Resource: "*"
+
+  stage: demo
+
+custom:
+  s3Sync:
+    - bucketName: ${self:service}-${self:provider.stage}-static-site-assets
+      localDir: static-site # required
+      acl: public-read # optional
+      followSymlinks: true # optional
+      defaultContentType: text/html # optional
+      params: # optional
+        - index.html:
+            CacheControl: 'no-cache'
+        - "*.js":
+            CacheControl: 'public, max-age=31536000'
+functions:
+  run_reko:
+    handler: parse_photo.run_reko
+    events:
+      - s3:
+          bucket: ${self:service}-${self:provider.stage}
+          event: s3:ObjectCreated:*
+  get_tags:
+    handler: get_info.get_tags
+
+resources:
+  Resources:
+    rekoPhotosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-Photos
+        AttributeDefinitions:
+          - AttributeName: photo_id
+            AttributeType: S
+          - AttributeName: upload_date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: photo_id
+            KeyType: HASH
+          - AttributeName: upload_date
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    rekoTagsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-Tags
+        AttributeDefinitions:
+          - AttributeName: tag
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tag
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    rekoPhotosTagsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-PhotosTags
+        AttributeDefinitions:
+          - AttributeName: photo_id
+            AttributeType: S
+          - AttributeName: tag_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: photo_id
+            KeyType: HASH
+          - AttributeName: tag_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    StaticSiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-${self:provider.stage}-static-site-assets
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: error.html
