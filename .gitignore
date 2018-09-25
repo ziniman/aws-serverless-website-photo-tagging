@@ -2,3 +2,4 @@
 *.png
 .DS_Store
 .serverless
+node_modules
