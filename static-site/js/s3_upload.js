@@ -17,7 +17,7 @@ var fileChooser = canvas;
 var button = document.getElementById('upload-button');
 var results = document.getElementById('results');
 var d = new Date();
-var fileName = 'IMG_' + d.getTime();
+var fileName = 'IMG_' + d.getFullYear() + d.getMonth() + d.getDate() + '-' + d.getHours() + d.getMinutes() + d.getSeconds() + d.getMilliseconds();
 
 button.addEventListener('click', function() {
     button.style.display = 'none';
