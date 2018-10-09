@@ -22,7 +22,7 @@ function listObjs() {
     bucket.listObjects({
         Prefix: prefix,
         EncodingType: "url",
-        MaxKeys: "5"
+        MaxKeys: "20"
     }, function(err, data) {
         if (err) {
             gallery.innerHTML = 'ERROR: ' + err;
