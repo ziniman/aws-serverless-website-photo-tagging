@@ -1,29 +1,30 @@
-AWS.config.region = 'eu-west-1'; // 1. Enter your region
+AWS.config.region = 'eu-west-1';
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'eu-west-1:3718ad59-2aba-4be2-9611-169ebfbb2707' // 2. Enter your identity pool
+    IdentityPoolId: 'eu-west-1:284ef18e-d632-4163-8b87-0f7ceeb8f99d'
 });
 AWS.config.credentials.get(function(err) {
     if (err) alert(err);
     console.log(AWS.config.credentials);
 });
-var bucketName = 'reko-photo-tagging-demo'; // Enter your bucket name
+var bucketName = 'reko-photo-tagging-demo';
 var bucket = new AWS.S3({
     params: {
         Bucket: bucketName
     }
 });
+
 var fileChooser = canvas;
 var button = document.getElementById('upload-button');
 var results = document.getElementById('results');
 var d = new Date();
-var fileName = d.getTime();
+var fileName = 'IMG_' + d.getTime();
 
 button.addEventListener('click', function() {
+    button.style.display = 'none';
     var dataBase64 = fileChooser.toDataURL("image/jpeg");
     dataBlob = dataURLtoBlob(dataBase64);
     var file = dataBlob;
     var fileType = 'image/jpeg';
-    console.log(file);
     if (file) {
         results.innerHTML = '';
         var objKey = fileName + '.jpg';
@@ -37,28 +38,10 @@ button.addEventListener('click', function() {
             if (err) {
                 results.innerHTML = 'ERROR: ' + err;
             } else {
-                listObjs(); // this function will list all the files which has been uploaded
-                //here you can also add your code to update your database(MySQL, firebase whatever you are using)
+                results.innerHTML = "Uploaded <a href='image.html?id=" + objKey + "'>" + objKey + "</a>"
             }
         });
     } else {
         results.innerHTML = 'Nothing to upload.';
     }
 }, false);
-
-function listObjs() {
-    var prefix = 'temp';
-    bucket.listObjects({
-        //Prefix: prefix
-    }, function(err, data) {
-        if (err) {
-            results.innerHTML = 'ERROR: ' + err;
-        } else {
-            var objKeys = "";
-            data.Contents.forEach(function(obj) {
-                objKeys += obj.Key + "<br>";
-            });
-            results.innerHTML = objKeys;
-        }
-    });
-}

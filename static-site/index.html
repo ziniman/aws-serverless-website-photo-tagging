@@ -5,9 +5,14 @@
   <link rel="stylesheet" type="text/css" href="css/main.css" charset="utf-8"/>
 </head>
 <body>
+  <div id="menu">
+    <div id="mItem"><a href="/">Home</a></div>
+    <div id="mItem"><a href="gallery.html">Gallery</a></div>
+    <div id="mItem">Tags</div>
+  </div>
   <div id="dataInput">
     <div>
-      <video id="player" controls autoplay width=320></video>
+      <video id="player" autoplay width=640></video>
     </div>
     <div>
       <button id="capture">Capture</button>
@@ -22,7 +27,7 @@
     </div>
   </div>
   <div id="results"></div>
-  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.15.min.js"></script>
   <script src="js/s3_upload.js" type="text/javascript"></script>
   <script src="js/camera.js" type="text/javascript"></script>
 </body>

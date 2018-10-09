@@ -3,6 +3,18 @@ body {
   padding: 0.5em;
   text-align: center;
   font-family: "Helvetica Neueu", "Helvetica", "Arial", sans;
+  display: inline-grid;
+}
+
+#menu, #results {
+  font-size: 1em;
+  margin: 1em;
+  display: inline-block;
+}
+
+#mItem {
+  float: left;
+  margin-right: 2em;
 }
 
 #player {
@@ -26,4 +38,24 @@ button {
   width: 200px;
   height: 50px;
   font-size: 1.2em;
+}
+
+#gallery {
+  width: 80%;
+}
+
+#gallery_image {
+  float: left;
+  padding: 10px;
+}
+
+#gallery_image img {
+  width: 200px;
+  margin: 10px;
+}
+
+#gallery_image p {
+  width: 90%;
+  text-align: center;
+  font-size: 0.5em;
 }

@@ -67,7 +67,7 @@ provider:
 
 custom:
   s3Sync:
-    - bucketName: ${self:service}-${self:provider.stage}-static-site-assets
+    - bucketName: ${self:custom.staticSiteName}
       localDir: static-site # required
       acl: public-read # optional
       followSymlinks: true # optional
@@ -77,14 +77,12 @@ custom:
             CacheControl: 'no-cache'
         - "*.js":
             CacheControl: 'public, max-age=31536000'
+  staticSiteName: reko.ziniman.com
+
 functions:
-  run_reko:
+  RunReko:
     handler: parse_photo.run_reko
-    events:
-      - s3:
-          bucket: ${self:service}-${self:provider.stage}
-          event: s3:ObjectCreated:*
-  get_tags:
+  GetTags:
     handler: get_info.get_tags
 
 resources:
@@ -136,11 +134,180 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+        - IndexName : IdOnly
+          KeySchema :
+          - AttributeName: photo_id
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput :
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+
     StaticSiteBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:service}-${self:provider.stage}-static-site-assets
+        BucketName: ${self:custom.staticSiteName}
         AccessControl: PublicRead
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: error.html
+
+    CDN:
+      Type: "AWS::CloudFront::Distribution"
+      Properties:
+        DistributionConfig:
+          ViewerCertificate:
+            AcmCertificateArn: arn:aws:acm:us-east-1:397652707012:certificate/8b9707e1-2238-42b9-9737-3c00fd22c0c5
+            SslSupportMethod: sni-only
+          Enabled: true
+          HttpVersion: http2
+          Aliases:
+            - ${self:custom.staticSiteName}
+          DefaultRootObject: index.html
+          Origins:
+            - DomainName: {"Fn::Join": ["", [{Ref: StaticSiteBucket}, ".", "s3-website-eu-west-1.amazonaws.com"]]}
+              Id: S3Origin
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: http-only
+          DefaultCacheBehavior:
+            ViewerProtocolPolicy: redirect-to-https
+            TargetOriginId: S3Origin
+            AllowedMethods:
+              - GET
+              - HEAD
+            Compress: false
+            DefaultTTL: 30
+            MinTTL: 10
+            ForwardedValues:
+              QueryString: false
+
+    ImagesBucket:
+      Type: AWS::S3::Bucket
+      DependsOn:
+        - EventLambdaPermissionS3Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${self:service}-${self:provider.stage}
+        CorsConfiguration:
+                CorsRules:
+                  -
+                    AllowedOrigins:
+                      - '*'
+                    AllowedHeaders:
+                      - '*'
+                    AllowedMethods:
+                      - GET
+                      - PUT
+                      - POST
+                      - DELETE
+                      - HEAD
+                    MaxAge: 3000
+        NotificationConfiguration:
+          LambdaConfigurations:
+            - Event: 's3:ObjectCreated:*'
+              Function:
+                'Fn::GetAtt': [ RunRekoLambdaFunction, Arn ]
+
+    EventLambdaPermissionS3Bucket:
+      DependsOn:
+        - RunRekoLambdaFunction
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          'Fn::GetAtt': [ RunRekoLambdaFunction, Arn ]
+        Action: 'lambda:InvokeFunction'
+        Principal: 's3.amazonaws.com'
+        SourceArn:
+          Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - ${self:service}-${self:provider.stage}
+
+    #Cognito
+    CognitoIdentityPool:
+      Type: AWS::Cognito::IdentityPool
+      Properties:
+        IdentityPoolName: RekoImageIdentityPool
+        AllowUnauthenticatedIdentities: true
+
+    # IAM roles
+    CognitoIdentityPoolRoles:
+      Type: AWS::Cognito::IdentityPoolRoleAttachment
+      Properties:
+        IdentityPoolId:
+          Ref: CognitoIdentityPool
+        Roles:
+          unauthenticated:
+            Fn::GetAtt: [CognitoUnAuthRole, Arn]
+
+    # IAM role used for unauthenticated users
+    CognitoUnAuthRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: 'Allow'
+              Principal:
+                Federated: 'cognito-identity.amazonaws.com'
+              Action:
+                - 'sts:AssumeRoleWithWebIdentity'
+              Condition:
+                StringEquals:
+                  'cognito-identity.amazonaws.com:aud':
+                    Ref: CognitoIdentityPool
+                'ForAnyValue:StringLike':
+                  'cognito-identity.amazonaws.com:amr': unauthenticated
+        Policies:
+          - PolicyName: RekoImageCognitoUnAuthorizedPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: 'Allow'
+                  Action:
+                    - 'mobileanalytics:PutEvents'
+                    - 'cognito-sync:*'
+                    - 'cognito-identity:*'
+                  Resource: '*'
+
+                # Allow users to invoke our API
+                - Effect: 'Allow'
+                  Action:
+                    - 's3:PutObject'
+                    - 's3:ListBucket'
+                    - 's3:GetObject'
+                    - 's3:PutObjectAcl'
+                  Resource: 'arn:aws:s3:::${self:service}-${self:provider.stage}/*'
+
+                - Effect: 'Allow'
+                  Action:
+                    - dynamodb:Query
+                    - dynamodb:Scan
+                    - dynamodb:GetItem
+                  Resource:
+                    - Fn::GetAtt:
+                      - rekoPhotosTable
+                      - Arn
+                    - Fn::GetAtt:
+                      - rekoTagsTable
+                      - Arn
+                    - Fn::GetAtt:
+                      - rekoPhotosTagsTable
+                      - Arn
+                    - Fn::Join:
+                      - ""
+                      - - Fn::GetAtt: [rekoPhotosTagsTable, Arn]
+                        - '/index/*'
+
+Outputs:
+  IdentityPoolId:
+    Value:
+      Ref: CognitoIdentityPool
+  WebSiteCloudFrontDistributionOutput:
+      Value:
+        'Fn::GetAtt': [ CDN, DomainName ]
