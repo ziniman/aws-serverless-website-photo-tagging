@@ -13,7 +13,7 @@ var bucket = new AWS.S3({
     }
 });
 
-ddbTableTags = 'reko-photo-tagging-demo-PhotosTags';
+var ddbTableTags = 'reko-photo-tagging-demo-PhotosTags';
 var ddb = new AWS.DynamoDB.DocumentClient();
 
 function listObjs() {
@@ -31,7 +31,7 @@ function listObjs() {
             data.Contents.forEach(function(obj) {
                 objKey = obj.Key;
                 rawKeys.push(objKey);
-                objKeys += "<div id='gallery_image'><a href='image.html?id=" + objKey + "'><img src='https://s3-eu-west-1.amazonaws.com/" + bucketName + "/" + objKey + "' id='" + objKey + "'></a><p>" + obj.LastModified + "</p></div>";
+                objKeys += "<div id='gallery_image'><a href='image.html?id=" + objKey + "'><img src='https://s3-eu-west-1.amazonaws.com/" + bucketName + "/" + objKey + "' id='" + objKey + "'></a><div class='tags_list' id='tag_" + objKey + "'></div></div>";
             });
             gallery.innerHTML = objKeys;
             rawKeys.forEach(getTags);
@@ -54,17 +54,15 @@ function getTags(key){
       console.log("Success", data);
       data.Items.forEach(function(element, index, array) {
         if (tags) tags += ", ";
-        tags += (element.tag_id);
+        tags += "<a href='tag.html?tag=" + (element.tag_id) + "'>" + (element.tag_id) + "</a>";
       });
     }
     if (tags == "") {
       tags = "NO TAGS";
     }
 
-    var currentImage = document.getElementById(key);
-    var results = document.getElementById("results");
-    if (currentImage) currentImage.title = tags;
-    if (results) results.innerHTML = tags;
+    var tag_p = document.getElementById('tag_' + key);
+    tag_p.innerHTML = tags;
 
   });
 }

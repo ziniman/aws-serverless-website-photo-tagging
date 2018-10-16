@@ -46,6 +46,10 @@ provider:
         - Fn::GetAtt:
           - rekoPhotosTagsTable
           - Arn
+        - Fn::Join:
+          - ""
+          - - Fn::GetAtt: [rekoPhotosTagsTable, Arn]
+            - '/index/*'
 
     - Effect: Allow
       Action:
@@ -84,6 +88,10 @@ functions:
     handler: parse_photo.run_reko
   GetTags:
     handler: get_info.get_tags
+    events:
+      - http:
+          path: info/get_tags
+          method: get
 
 resources:
   Resources:
@@ -138,6 +146,15 @@ resources:
         - IndexName : IdOnly
           KeySchema :
           - AttributeName: photo_id
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput :
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName : TagOnly
+          KeySchema :
+          - AttributeName: tag_id
             KeyType: HASH
           Projection:
             ProjectionType: ALL

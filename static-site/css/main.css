@@ -40,22 +40,34 @@ button {
   font-size: 1.2em;
 }
 
-#gallery {
-  width: 80%;
+#gallery_image {
+    margin: 5px;
+    border: 1px solid #ccc;
+    float: left;
+    width: 220px;
+    height: 240px;
 }
 
-#gallery_image {
-  float: left;
-  padding: 10px;
+#gallery_image:hover {
+    border: 1px solid #777;
 }
 
 #gallery_image img {
-  width: 200px;
-  margin: 10px;
+    width: 100%;
+    height: auto;
 }
 
-#gallery_image p {
-  width: 90%;
-  text-align: center;
-  font-size: 0.5em;
+.tags_list{
+    padding: 15px;
+    text-align: center;
+    font-size: 0.7em;
+    color: #7777ee;
+}
+
+.tags_list a, a:visited{
+    color: #7777ee;
+}
+
+.tags_list a:hover {
+    color: #3333aa;
 }
