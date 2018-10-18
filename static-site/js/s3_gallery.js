@@ -1,6 +1,6 @@
 AWS.config.region = 'eu-west-1';
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'eu-west-1:284ef18e-d632-4163-8b87-0f7ceeb8f99d'
+    IdentityPoolId: '[SET YOU POOL ID]'
 });
 AWS.config.credentials.get(function(err) {
     if (err) alert(err);
@@ -22,7 +22,6 @@ function listObjs() {
     bucket.listObjects({
         Prefix: prefix,
         EncodingType: "url",
-        MaxKeys: "20"
     }, function(err, data) {
         if (err) {
             gallery.innerHTML = 'ERROR: ' + err;

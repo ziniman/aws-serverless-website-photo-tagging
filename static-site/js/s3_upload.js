@@ -1,6 +1,6 @@
 AWS.config.region = 'eu-west-1';
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'eu-west-1:284ef18e-d632-4163-8b87-0f7ceeb8f99d'
+    IdentityPoolId: '[SET YOU POOL ID]'
 });
 AWS.config.credentials.get(function(err) {
     if (err) alert(err);
@@ -31,6 +31,7 @@ button.addEventListener('click', function() {
         var params = {
             Key: objKey,
             ContentType: fileType,
+            CacheControl: 'max-age=3600',
             Body: file,
             ACL: 'public-read'
         };

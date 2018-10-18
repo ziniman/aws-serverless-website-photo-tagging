@@ -1,7 +1,7 @@
 function callAPI(myTag){
       $.ajax({
       type: "GET",
-      url: "https://6dng5apfpk.execute-api.eu-west-1.amazonaws.com/demo/info/get_tags?tag=" + myTag,
+      url: "[SET YOU API URL]?tag=" + myTag,
       data: {
        format: 'json'
       },

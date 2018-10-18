@@ -176,7 +176,7 @@ resources:
       Properties:
         DistributionConfig:
           ViewerCertificate:
-            AcmCertificateArn: arn:aws:acm:us-east-1:397652707012:certificate/8b9707e1-2238-42b9-9737-3c00fd22c0c5
+            AcmCertificateArn: [SET YOUR CERTIFICATE]
             SslSupportMethod: sni-only
           Enabled: true
           HttpVersion: http2
