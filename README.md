@@ -30,7 +30,7 @@ $ npm install --save serverless-s3-sync
 
 ### config.js
 
-Each time you deploy this app to AWS your AWS settings and services will be changed. You should manage those parameters in [/js/config.js](/js/config.js).
+Each time you deploy this app to AWS your AWS settings and services will be changed. You should manage those parameters in [/static-site/js/config.js](/static-site/js/config.js).
 
 Please make sure you provide the next parameters before deploying you app:
 
@@ -42,7 +42,7 @@ apiURL
 
 ### serverless.yml
 
-In addition to ```/js/js.config``` you will have to generate an SSL key using AWS Certificate Manager (ACM) and provide the resource name (ARN) in ```serverless.yml```. Search your ```serverless.yml``` for ```AcmCertificateArn``` and update to the ARN of your certificate.
+In addition to ```/static-site/js/js.config``` you will have to generate an SSL key using AWS Certificate Manager (ACM) and provide the resource name (ARN) in ```serverless.yml```. Search ```/serverless.yml``` for ```AcmCertificateArn``` and update to the ARN of your certificate.
 
 To customize your application and make it yours, please update ```staticSiteName``` to the domain you would like to use for your app. This domain is needed to create your SSL certificate and CloudFront distribution.
 You can manage your DNS record in Amazon Route53 but this is out of the scope of this project.
