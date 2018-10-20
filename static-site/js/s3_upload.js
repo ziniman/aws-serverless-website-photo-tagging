@@ -1,11 +1,11 @@
-AWS.config.region = 'eu-west-1';
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: '[SET YOU POOL ID]'
+    IdentityPoolId: AWSPoolID
 });
 AWS.config.credentials.get(function(err) {
     if (err) alert(err);
-    console.log(AWS.config.credentials);
+    //console.log(AWS.config.credentials);
 });
+
 var bucketName = 'reko-photo-tagging-demo';
 var bucket = new AWS.S3({
     params: {

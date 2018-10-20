@@ -38,6 +38,18 @@ button {
   width: 200px;
   height: 50px;
   font-size: 1.2em;
+  background-color: blue;
+  color: white;
+}
+
+#upload {
+  padding: 0.72em;
+  margin: 0.5em;
+  width: 200px;
+  height: 50px;
+  font-size: 1.2em;
+  background-color: green;
+  color: white;
 }
 
 #gallery_image {
@@ -70,4 +82,8 @@ button {
 
 .tags_list a:hover {
     color: #3333aa;
+}
+
+#tag_id {
+  color: #777; 
 }
