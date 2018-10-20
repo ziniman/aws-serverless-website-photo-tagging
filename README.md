@@ -45,7 +45,7 @@ apiURL
 In addition to ```/static-site/js/js.config``` you will have to generate an SSL key using AWS Certificate Manager (ACM) and provide the resource name (ARN) in ```serverless.yml```. Search [/serverless.yml](/serverless.yml) for ```AcmCertificateArn``` and update to the ARN of your certificate.
 
 To customize your application and make it yours, please update ```staticSiteName``` to the domain you would like to use for your app. This domain is needed to create your SSL certificate and CloudFront distribution.
-You can manage your DNS record in Amazon Route53 but this is out of the scope of this project.
+You can manage your DNS record in Amazon Route53 but this is out of scope of this project.
 
 # Application Deploy
 
