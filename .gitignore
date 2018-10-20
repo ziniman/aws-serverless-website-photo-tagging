@@ -3,3 +3,4 @@
 .DS_Store
 .serverless
 node_modules
+static-site/js/config.js
