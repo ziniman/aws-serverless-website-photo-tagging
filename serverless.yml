@@ -55,6 +55,7 @@ provider:
       Action:
         - s3:ListBucket
         - s3:GetObject
+        - s3:DeleteObject
       Resource:
          Fn::Join:
            - ""
@@ -65,6 +66,7 @@ provider:
       Action:
         - rekognition:DetectLabels
         - rekognition:DetectFaces
+        - rekognition:DetectModerationLabels
       Resource: "*"
 
   stage: demo

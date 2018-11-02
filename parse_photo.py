@@ -57,7 +57,7 @@ def detect_labels(key, bucket, max_labels=10, min_confidence=80):
     response = rekognition.detect_labels(
         Image={
             "S3Object": {
-            "Bucket": bucket,
+                "Bucket": bucket,
                 "Name": key,
             }
         },
@@ -65,6 +65,18 @@ def detect_labels(key, bucket, max_labels=10, min_confidence=80):
         MinConfidence=min_confidence,
     )
 
+    return response
+
+def image_moderation (key, bucket, min_confidence=40):
+    response = rekognition.detect_moderation_labels(
+        Image={
+            "S3Object": {
+                "Bucket": bucket,
+                "Name": key,
+            }
+        },
+        MinConfidence=min_confidence,
+    )
     return response
 
 def run_reko(event, context):
@@ -78,9 +90,19 @@ def run_reko(event, context):
     bucket_object = event['Records'][0]['s3']['bucket']
     event_time = event['Records'][0]['eventTime']
 
-    write_image_meta(file_object, bucket_object, event_time)
-
     labels = detect_labels(file_key, bucket_object['name'])
-    logger.info('Reko Labels: ' + json.dumps(labels))
+    moderation = image_moderation(file_key, bucket_object['name'])
 
-    write_image_tags(file_object, bucket_object, labels)
+    if moderation['ModerationLabels']:
+        logger.info('Moderation Failed: ' + json.dumps(moderation))
+        logger.info('Deleting Object: ' + bucket_object['name'] + '/' + file_key)
+        client = boto3.client('s3')
+        response = client.delete_object(
+            Bucket=bucket_object['name'],
+            Key=file_key
+            )
+        logger.info(response)
+    else:
+        write_image_meta(file_object, bucket_object, event_time)
+        write_image_tags(file_object, bucket_object, labels)
+        logger.info('Reko Labels: ' + json.dumps(labels))
