@@ -152,7 +152,7 @@ resources:
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput :
-            ReadCapacityUnits: 1
+            ReadCapacityUnits: 5
             WriteCapacityUnits: 1
         - IndexName : TagOnly
           KeySchema :
