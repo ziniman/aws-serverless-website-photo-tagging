@@ -90,7 +90,6 @@ def run_reko(event, context):
     bucket_object = event['Records'][0]['s3']['bucket']
     event_time = event['Records'][0]['eventTime']
 
-    labels = detect_labels(file_key, bucket_object['name'])
     moderation = image_moderation(file_key, bucket_object['name'])
 
     if moderation['ModerationLabels']:
@@ -103,6 +102,7 @@ def run_reko(event, context):
             )
         logger.info(response)
     else:
+        labels = detect_labels(file_key, bucket_object['name'])
         write_image_meta(file_object, bucket_object, event_time)
         write_image_tags(file_object, bucket_object, labels)
         logger.info('Reko Labels: ' + json.dumps(labels))

@@ -59,9 +59,20 @@ uploadButton.addEventListener('change', () => {
 function drawImage(img, canvas) {
   image_height = img.height;
   image_width = img.width;
-  if (image_width>640) {
-    new_height = image_height * (640/image_width);
-    new_width = 640;
+  new_height = image_height;
+  new_width = image_width;
+  console.log(image_width + "X" + image_height);
+  if (image_width > image_height) {
+    if (image_width>640) {
+      new_height = image_height * (640/image_width);
+      new_width = 640;
+    }
+  }
+  else {
+    if (image_height>480) {
+      new_width = image_width * (480/image_height);
+      new_height = 480;
+    }
   }
   canvas.height = new_height;
   canvas.width = new_width;

@@ -27,7 +27,6 @@ body {
 
 #imageInput {
   display: none;
-  background-color: #eee;
   width: 640px;
   height: 360px;
   margin: 0.5em;
@@ -57,7 +56,7 @@ button {
     border: 1px solid #ccc;
     float: left;
     width: 220px;
-    height: 240px;
+    min-height: 350px;;
 }
 
 #gallery_image:hover {
@@ -85,5 +84,5 @@ button {
 }
 
 #tag_id {
-  color: #777; 
+  color: #777;
 }
