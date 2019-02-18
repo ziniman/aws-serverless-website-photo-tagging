@@ -23,7 +23,7 @@ service: reko-photo-tagging
 provider:
   name: aws
   runtime: python2.7
-  stackName: ${self:service}-CF-Template
+  stackName: ${self:service}-${self:provider.stage}
   logRetentionInDays: 14
   region: eu-west-1
   memorySize: 128
@@ -111,9 +111,7 @@ resources:
             KeyType: HASH
           - AttributeName: upload_date
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
     rekoTagsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -124,9 +122,7 @@ resources:
         KeySchema:
           - AttributeName: tag
             KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
     rekoPhotosTagsTable:
       Type: AWS::DynamoDB::Table
       Properties:
