@@ -2,9 +2,11 @@ const player = document.getElementById('player');
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const captureButton = document.getElementById('capture');
-const uploadButton = document.getElementById('inp');
+const uploadButton = document.getElementById('upload');
+const uploadFile = document.getElementById('inp');
 const dataInput = document.getElementById('dataInput');
 const imageInput = document.getElementById('imageInput');
+const approval = document.getElementById('approval');
 
 const constraints = {
   video: {width: 640, height: 480},
@@ -21,7 +23,7 @@ navigator.mediaDevices.getUserMedia(constraints)
 
 captureButton.addEventListener('click', () => {
   // Draw the video frame to the canvas.
-  imageInput.style.display = 'inline-block';
+  imageInput.setAttribute('style', 'display:inline-block !important');
   console.log(vid_width);
   context.drawImage(player, 0, 0, vid_width, vid_height);
   player.srcObject.getVideoTracks().forEach(track => track.stop());
@@ -39,8 +41,8 @@ function dataURLtoBlob(dataURL) {
 }
 
 uploadButton.addEventListener('change', () => {
-   imageInput.style.display = 'inline-block';
-   var file = uploadButton.files[0];
+   imageInput.setAttribute('style', 'display:inline-block !important');
+   var file = uploadFile.files[0];
    console.log(file);
    var FR = new FileReader();
    FR.readAsDataURL(file);

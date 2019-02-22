@@ -4,3 +4,4 @@
 .serverless
 node_modules
 demo_images
+*_bs.html

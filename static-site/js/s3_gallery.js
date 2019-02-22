@@ -30,7 +30,7 @@ function listObjs() {
             data.Contents.forEach(function(obj) {
                 objKey = obj.Key;
                 rawKeys.push(objKey);
-                objKeys += "<div id='gallery_image'><a href='image.html?id=" + objKey + "'><img src='https://s3-eu-west-1.amazonaws.com/" + bucketName + "/" + objKey + "' id='" + objKey + "'></a><div class='tags_list' id='tag_" + objKey + "'></div></div>";
+                objKeys += "<div id='gallery_image' class='thumbnail'><a href='image.html?id=" + objKey + "'><img src='https://s3-eu-west-1.amazonaws.com/" + bucketName + "/" + objKey + "' id='" + objKey + "' class='rounded mx-auto d-block img-fluid p-2'></a><div class='tags_list' id='tag_" + objKey + "'></div></div>";
             });
             gallery.innerHTML = objKeys;
             rawKeys.forEach(getTags);
