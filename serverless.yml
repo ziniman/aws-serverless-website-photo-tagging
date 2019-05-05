@@ -138,8 +138,8 @@ resources:
           - AttributeName: tag_id
             KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 2
         GlobalSecondaryIndexes:
         - IndexName : IdOnly
           KeySchema :
@@ -149,7 +149,7 @@ resources:
             ProjectionType: ALL
           ProvisionedThroughput :
             ReadCapacityUnits: 5
-            WriteCapacityUnits: 1
+            WriteCapacityUnits: 2
         - IndexName : TagOnly
           KeySchema :
           - AttributeName: tag_id
@@ -157,8 +157,8 @@ resources:
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput :
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 2
 
     StaticSiteBucket:
       Type: AWS::S3::Bucket

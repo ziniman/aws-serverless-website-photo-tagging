@@ -2,35 +2,61 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="css/main.css" charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serverless Demo Site</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+    <script src='https://code.jquery.com/jquery-1.9.1.min.js'></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <div id="menu">
-      <div id="mItem"><a href="index.html">Home</a></div>
-      <div id="mItem"><a href="gallery.html">Gallery</a></div>
+    <!-- Static navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Serverless Website Demo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gallery.html">Gallery</a>
+        </li>
+      </ul>
     </div>
-    <div id="dataInput">
+  </nav>
+    <div class="container-fluid justify-content-center text-center mt-3" id="dataInput">
       <div>
         <video id="player" autoplay width="640"></video>
       </div>
       <div>
-        <button id="capture">Capture Photo</button>
+        <button type="button" class="btn btn-primary" id="capture">Capture Photo</button>
         or
-        <label id="upload">Upload Photo
+        <label class="btn btn-success mb-0" id="upload">Upload Photo
           <input id="inp" type="file" accept="image/*" style="display: none;">
         </label>
       </div>
     </div>
-    <div id="imageInput">
+    <div class="container-fluid justify-content-center text-center mt-3 d-none" id="imageInput">
       <div>
         <canvas id="canvas" width=640 height=480></canvas>
       </div>
       <div>
-        <div><input type="checkbox" id="approval">I approve to display and use this file publicly</div>
-        <button id="upload-button">Upload to S3</button>
+        <div>
+          <input class="form-check-input" type="checkbox" id="approval">
+           <label class="form-check-label" for="approval">
+             I approve to display and use this file publicly
+           </label>
+        </div>
+        <button class="btn btn-info" id="upload-button">Upload to S3</button>
       </div>
       <div id="results"></div>
     </div>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.15.min.js"></script>
     <script src="js/config.js" type="text/javascript"></script>
     <script src="js/s3_upload.js" type="text/javascript"></script>
