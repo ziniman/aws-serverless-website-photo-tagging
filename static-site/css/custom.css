@@ -441,4 +441,5 @@ img::-moz-selection {
   background-color: #eee;
   width: 640px;
   max-width: 100%;
+  max-height: 80%;
 }

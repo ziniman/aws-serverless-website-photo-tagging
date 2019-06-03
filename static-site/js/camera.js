@@ -24,10 +24,13 @@ navigator.mediaDevices.getUserMedia(constraints)
 captureButton.addEventListener('click', () => {
   // Draw the video frame to the canvas.
   imageInput.setAttribute('style', 'display:inline-block !important');
+  stream_h = player.srcObject.getVideoTracks()[0].getSettings().height
+  stream_w = player.srcObject.getVideoTracks()[0].getSettings().width
   console.log('Original Capture: ' + vid_width + 'X' + vid_height);
-  canvas.height = vid_height;
-  canvas.width = vid_width;
-  context.drawImage(player, 0, 0, vid_width, vid_height);
+  console.log('Video Size: ' + stream_w + 'X' + stream_h);
+  canvas.height = stream_h;
+  canvas.width = stream_w;
+  context.drawImage(player, 0, 0, stream_w, stream_h);
   player.srcObject.getVideoTracks().forEach(track => track.stop());
   dataInput.style.display = 'none';
 });
